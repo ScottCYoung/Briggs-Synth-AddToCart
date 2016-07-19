@@ -9,12 +9,8 @@ import time
 
 success = True
 wd = WebDriver()
-wd.implicitly_wait(15)
+wd.implicitly_wait(5)
 
-def wait_until_visible_then_click(element):
-    element = WebDriverWait(wd,5,poll_frequency=.2).until(
-        EC.visibility_of(element))
-    element.click()
 
 def is_alert_present(wd):
     try:
@@ -23,8 +19,8 @@ def is_alert_present(wd):
     except:
         return False
 
+
 try:
-    #wd.get("https://shop.briggsandstratton.com/us/en/repair-parts#/s/GEN//209617GS/1")
     wd.get("https://shop.briggsandstratton.com/us/en")
     wd.find_element_by_link_text("Shop Repair Parts Now »").click()
     wd.find_element_by_link_text("No, thanks").click()
@@ -34,18 +30,24 @@ try:
     wd.find_element_by_id("arisearch_txtSearch").clear()
     wd.find_element_by_id("arisearch_txtSearch").send_keys("209617GS")
     wd.find_element_by_id("arisearch_btnLookup").click()
-    #wd.find_element_by_id("aripartsSearch_btnCart0").click()
-    time.sleep(5)
 
+    # The following div classes get in the way of our user click as seen in errors
+    # and we must wait for them to unload
+    # <div class="blockUI blockOverlay" ... wait; position: absolute;"></div>
+
+    print('Testing blockUI class')
+    wait = WebDriverWait(wd,5).until(EC.invisibility_of_element_located((By.CLASS_NAME, "blockUI")))
+    print('Testing blockOverlay class')
+    wait = WebDriverWait(wd,2).until(EC.invisibility_of_element_located((By.CLASS_NAME, "blockOverlay")))
+
+    # Add item 209617GS to cart
     wd.find_element_by_id('aripartsSearch_btnCart0').click()
-    time.sleep(5)
-    if not ("My Cart(1)" in wd.find_element_by_tag_name("html").text):
-        success = False
-        print("verifyTextPresent failed")
+
+    # Click My Cart(1) to load Shopping cart page
     wd.find_element_by_link_text("My Cart(1)").click()
 
-    #Fill out form
-    print("clicking checkout")
+    # Fill out form with test data
+    print("Filling out user data")
     wd.find_element_by_xpath("//a[@id='content_2_ButtonCheckout']//span[.='Checkout']").click()
 
     wd.find_element_by_id("content_2_TextBoxBTFirstName").click()
@@ -78,17 +80,15 @@ try:
     wd.find_element_by_id("content_2_txtEmail2").clear()
     wd.find_element_by_id("content_2_txtEmail2").send_keys("Test@basco.com")
 
-    #time.sleep(15)
+    # Continue to final page
     wd.find_element_by_link_text("CONTINUE »").click()
-    #time.sleep(15)
-    #if not wd.find_element_by_id("content_2_CheckBoxUseSuggested").is_selected():
-    #    wd.find_element_by_id("content_2_CheckBoxUseSuggested").click()
-    #wd.find_element_by_link_text("CONTINUE »").click()
-    if not ("GRAND TOTAL:" in wd.find_element_by_tag_name("html").text):
+
+    #Verify part numbe ris on test page
+    print('Looking for Part Number on page to complete test')
+    #if not ("GRAND TOTAL:" in wd.find_element_by_tag_name("html").text):
+    if not ("209617GS" in wd.find_element_by_tag_name("html").text):
         success = False
         print("verifyTextPresent failed")
-
-    #wd.find_element_by_id("aripartsSearch_btnCart0").click()
 
 
 finally:
