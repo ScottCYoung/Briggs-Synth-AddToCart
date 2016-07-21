@@ -49,7 +49,7 @@ try:
     check = WebDriverWait(driver, 10).until_not(EC.presence_of_element_located((By.ID, "curtain")))
 
     # Add item 209617GS to cart
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID,"aripartsSearch_btnCart0")))
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"input.ariPartListAddToCart.ariImageOverride")))
     element = driver.find_element_by_xpath("//input[@id='aripartsSearch_btnCart0']")
     WebDriverWait(driver, 10).until_not(EC.presence_of_element_located((By.ID, "curtain")))
     driver.find_element_by_id('aripartsSearch_btnCart0').click()
@@ -108,6 +108,7 @@ try:
 
     #Verify part number is on test page
     print('Looking for Part Number on page to complete test')
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"span.cart_mn")))
     assert "209617GS" in driver.page_source
 
 finally:
