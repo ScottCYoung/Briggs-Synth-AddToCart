@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
-from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
-
 success = True
-driver = WebDriver()
-
 try:
     driver.set_window_size(1900, 1000)
     driver.get("https://shop.briggsandstratton.com/us/en")
@@ -17,7 +13,7 @@ try:
     # This try statement is used to detect the Foresee overlay that pops up at this point in FF
     # Without this, Chrome will not continue to next step as it will error out while waiting
     try:
-        wait = WebDriverWait(driver,5).until(EC.presence_of_element_located((By.LINK_TEXT, "No, thanks")))
+        wait = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.LINK_TEXT, "No, thanks")))
         driver.find_element_by_link_text("No, thanks").click()
     except Exception, e:
         print("Foresee not seen here")
@@ -25,7 +21,8 @@ try:
     WebDriverWait(driver, 10).until_not(EC.presence_of_element_located((By.ID, "fsrOverlay")))
 
     driver.find_element_by_id("aarisearch_brands_jl").click()
-    wait = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH, "//ul[@class='ari-caused-spacer-expand']/li[3]")))
+    wait = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//ul[@class='ari-caused-spacer-expand']/li[3]")))
     driver.find_element_by_xpath("//ul[@class='ari-caused-spacer-expand']/li[3]").click()
     driver.find_element_by_id("arisearch_txtSearch").click()
     driver.find_element_by_id("arisearch_txtSearch").clear()
@@ -37,7 +34,7 @@ try:
     # <div class="blockUI blockOverlay" ... wait; position: absolute;"></div>
 
     try:
-        hideElement = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CLASS_NAME, "blockUI")))
+        hideElement = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "blockUI")))
     except Exception, e:
         print("BlockUI not found")
     try:
@@ -49,13 +46,14 @@ try:
     check = WebDriverWait(driver, 10).until_not(EC.presence_of_element_located((By.ID, "curtain")))
 
     # Add item 209617GS to cart
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"input.ariPartListAddToCart.ariImageOverride")))
+    WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "input.ariPartListAddToCart.ariImageOverride")))
     element = driver.find_element_by_xpath("//input[@id='aripartsSearch_btnCart0']")
     WebDriverWait(driver, 10).until_not(EC.presence_of_element_located((By.ID, "curtain")))
     driver.find_element_by_id('aripartsSearch_btnCart0').click()
 
     # Click My Cart(1) to load Shopping cart page
-    wait = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.LINK_TEXT,"My Cart(1)")))
+    wait = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.LINK_TEXT, "My Cart(1)")))
 
     # This try statement is used to detect the Foresee overlay that pops up at this point in FF
     # Without this, Chrome will not continue to next step as it will error out while waiting
@@ -65,8 +63,8 @@ try:
     except Exception, e:
         print("Foresee not seen here")
 
-    #View the cart contents
-    ActionChains(driver).move_to_element((By.LINK_TEXT,"My Cart(1)"))
+    # View the cart contents
+    ActionChains(driver).move_to_element((By.LINK_TEXT, "My Cart(1)"))
     driver.find_element_by_link_text("My Cart(1)").click()
 
     # Fill out form with test data
@@ -106,9 +104,9 @@ try:
     # Continue to Checkout confirmation
     driver.find_element_by_link_text("CONTINUE »").click()
 
-    #Verify part number is on test page
+    # Verify part number is on test page
     print('Looking for Part Number on page to complete test')
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"span.cart_mn")))
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.cart_mn")))
     assert "209617GS" in driver.page_source
 
 finally:
